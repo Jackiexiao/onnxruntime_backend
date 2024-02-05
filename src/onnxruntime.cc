@@ -433,6 +433,11 @@ ModelState::LoadModel(
               .c_str());
       // Return the session
       return nullptr;
+    } else {
+      LOG_MESSAGE(
+          TRITONSERVER_LOG_INFO,
+          (std::string("No session found for group: ") + instance_group_name + std::string(". Creating a new session"))
+              .c_str());
     }
     // In case of error carry on with the code
   }
@@ -2973,8 +2978,9 @@ TRITONBACKEND_GetBackendAttribute(
       "TRITONBACKEND_GetBackendAttribute: setting attributes");
   // This backend can safely handle parallel calls to
   // TRITONBACKEND_ModelInstanceInitialize (thread-safe).
+  // TODO: Changed to False to make sure share_session_between_instances works
   RETURN_IF_ERROR(TRITONBACKEND_BackendAttributeSetParallelModelInstanceLoading(
-      backend_attributes, true));
+      backend_attributes, false));
 
   return nullptr;
 }
